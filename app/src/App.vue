@@ -14,4 +14,9 @@ export default {
   }
 }
 </script>
+<style>
+  a{
+    margin: 10px;
+  }
+</style>
 
