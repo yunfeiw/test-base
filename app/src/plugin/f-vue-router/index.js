@@ -1,14 +1,29 @@
-import Home from '../../view/home';
+import Vue from 'vue';
 class VueRouter {
-    constructor(optins) {
+    constructor(options) {
+        this.$options = options;
+
         this.current = '/';//默认值
-        window.addEventListener('hashchange', function () {
-            console.log('url变换了', optins)
+        // 初始化
+        Vue.util.defineReactive(this, 'current', window.location.hash.split('#')[1] || '/')
+        // 监听url
+        window.addEventListener('hashchange', () => {
             this.current = window.location.hash.split('#')[1];
         })
     }
 }
 VueRouter.install = function (Vue) {
+    // 保存routes配置项
+    // 由于VueRouter,先于Vue实例的执行，所以，我们需要延迟执行
+    // Vue.mixin
+    Vue.mixin({
+        beforeCreate() {
+            // 由于是全局混入，但router配置只有根有，所有判断下
+            if (this.$options.router) {
+                Vue.prototype.$router = this.$options.router;
+            }
+        }
+    })
     // 注册组件
     Vue.component('router-link', {
         props: {
@@ -27,7 +42,13 @@ VueRouter.install = function (Vue) {
     })
     Vue.component('router-view', {
         render(h) {
-            return h(Home)
+            // 获取当前组件
+            const { current, $options: { routes } } = this.$router;
+            console.log('监听到了')
+            const { component } = routes.find(e => e.path == current);
+
+            return h(component)
+
         },
     })
 }
