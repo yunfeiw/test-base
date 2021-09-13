@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 
 import Home from '../view/home.vue'
 import About from '../view/about.vue'
+import Info from '../components/info.vue'
 const routes = [
     {
         path: '/',
@@ -12,7 +13,13 @@ const routes = [
     },
     {
         path: '/about',
-        component: About
+        component: About,
+        children:[
+            {
+                path:'/about/info',
+                component:Info
+            }
+        ]
     }
 
 ]
