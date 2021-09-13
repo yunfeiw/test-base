@@ -1,23 +1,16 @@
 <template>
-  <div>
-    <router-link to='/'>home</router-link>
-    <router-link to='/about'>about</router-link>
-    <router-link to='/about/info'>info</router-link>
-    <router-view></router-view>
-  </div>
+  <div>222</div>
 </template>
 
 <script>
-
 export default {
-  name: 'App',
-  components: {
-  }
-}
+  name: "App",
+  components: {},
+};
 </script>
 <style>
-  a{
-    margin: 10px;
-  }
+a {
+  margin: 10px;
+}
 </style>
 
