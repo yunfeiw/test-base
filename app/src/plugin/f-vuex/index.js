@@ -2,16 +2,36 @@ let Vue
 class Store {
     constructor(options) {
         this.options = options;
-        this._vm = new Vue({
-            data: {
-                $$state: options.state
-            }
-        });
+
 
         // moutations
         this._mutations = options.mutations
         // actions
         this._actions = options.actions;
+        // getters
+        this._getters = options.getters;
+        const computed = {}
+        this.getters = {};// 暴漏 外部获取
+
+        let _this = this;
+        Object.keys(this._getters).forEach(key => {
+            let fn = this._getters[key]
+            // computed中的this指向的当前调用组件而不是当前的Store,所以保存下
+            computed[key] = () => {
+                return fn(_this.state)
+            }
+            // getters是只读属性
+            Object.defineProperty(this.getters, key, {
+                get: () => this._vm[key] //默认 key值 会被代理（computed）
+            })
+        })
+
+        this._vm = new Vue({
+            data: {
+                $$state: options.state
+            },
+            computed
+        });
 
         // 作用域
         this.commit = this.commit.bind(this)

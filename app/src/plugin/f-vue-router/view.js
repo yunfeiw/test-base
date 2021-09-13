@@ -28,7 +28,7 @@ export default {
         // const { component } = routes.find(e => e.path == current);
         // return h(component)
         const component = this.$router.matched[deep] && this.$router.matched[deep].component
-        if(component){
+        if(!component){
             return
         }
         return h(component)
