@@ -10,22 +10,27 @@
 
 <body>
     <div id="app">
-        <p>{{counter}}</p>
+        <p>哈哈哈{{counter}}我草了</p>
+        <div v-text='counter'></div>
+        <p v-html='docs'></p>
+        <div>test</div>
+        <input type="text">
     </div>
-    <script src="./plugin/fvue.js"></script>
-    <script>
+    <script type="module">
+        import Fvue from './plugin/fvue.js'
         // 1 数据驱动：数据响应式
         // 2 编译：得到渲染函数
         // 3 依赖收集
-        const app = new Vue({
+        const app = new Fvue({
             el: "#app",
             data: {
-                counter: 1
+                counter: 1,
+                docs:'<div style="color:red;">html文本</div>'
             }
         })
-        setInterVal(() => {
+        setTimeout(()=>{
             app.counter++
-        }, 1000)
+        },1000)
     </script>
 </body>
 
