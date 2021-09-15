@@ -21,31 +21,13 @@ class Compile {
             // 判断节点类型
             if (this.isElement(node)) {
                 // 元素
-                console.log('元素', node.nodeName)
+                this.createElement(node)
+                // console.log('元素', node.nodeName)
 
-                // 元素：指令、属性绑定、事件
 
-                const attrs = node.attributes;
-                Array.from(attrs).forEach(attr => {
-                    // 判断动态属性
-                    // 1. 指令 v-xxx = ooo
-                    const attrName = attr.name;
-                    const exp = attr.value;
-                    if (this.isDir(attrName)) {
-                        // 截取指令  text html
-                        const dir = attrName.substring(2);
-                        // 执行该指令的函数
-                        this[dir] && this[dir](node, exp);
-                    }
-                })
-
-                // 元素节点，递归
-                if (node.childNodes.length) {
-                    this.compile(node)
-                }
             } else if (this.isInter(node)) {
                 // 文本
-                console.log("文本", node.textContent);
+                // console.log("文本", node.textContent);
                 // 处理插值绑定
                 this.compileText(node);
             }
@@ -82,6 +64,7 @@ class Compile {
         node.innerHTML = val
     }
 
+    /*** 文本--start */
     // 解析 {{xxx}}
     compileText(node) {
         this.update(node, RegExp.$1, 'compileText')
@@ -90,9 +73,44 @@ class Compile {
     }
 
     compileTextUpdater(node, val) {
-        node.textContent = node.textContent.replace(/\{\{(.*)\}\}/, val)
+        // node.textContent = node.textContent.replace(/\{\{(.*)\}\}/, val) // 有问题 难受
+        node.textContent = val
     }
+    /** 文本 --end */
 
+    /** 元素 --start */
+    createElement(node) {
+        // 元素：指令、属性绑定、事件
+
+        const attrs = node.attributes;
+        Array.from(attrs).forEach(attr => {
+            // 判断动态属性
+            // 1. 指令 v-xxx = ooo
+            const attrName = attr.name;
+            const exp = attr.value;
+            if (this.isDir(attrName)) {
+                // 截取指令  text html
+                const dir = attrName.substring(2);
+                // 执行该指令的函数
+                this[dir] && this[dir](node, exp);
+            }
+
+            // 2. 事件 @ v-on
+            if (this.isEvent(attrName)) {
+                // @click = 'onClick'
+                const dir = attrName.substring(1); // click
+
+                // 事件监听
+                this.eventHandler(node, exp, dir)
+            }
+        })
+
+        // 元素节点，递归
+        if (node.childNodes.length) {
+            this.compile(node)
+        }
+    }
+    /** 元素 --end */
 
     // 元素判断
     isElement(node) {
@@ -108,7 +126,35 @@ class Compile {
     isDir(attrName) {
         return attrName.startsWith('v-');
     }
+    // 事件判断 @
+    isEvent(dir) {
+        return dir.indexOf('@') == 0;
+    }
 
+    // 事件处理
+    eventHandler(node, exp, dir) {
+        // exp 是函数名称 
+        const fn = this.$vm.$options.methods && this.$vm.$options.methods[exp]
+        node.addEventListener(dir, fn.bind(this.$vm));// 作用域
+    }
+
+    // v-model = 'xx'
+    model(node, exp) {
+        // update 方法只完成赋值和更新
+        this.update(node, exp, 'model')
+
+        // 补充 事件监听(input 类型的不同，监听的方法也不同)
+        node.addEventListener('input', e => {
+            // 新值赋值
+            console.log(this.$vm)
+            this.$vm[exp] = e.target.value;
+        })
+    }
+
+    modelUpdater(node, v) {
+        // 表单（input）赋值
+        node.value = v
+    }
 }
 
 export default Compile

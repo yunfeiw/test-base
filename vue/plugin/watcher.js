@@ -18,7 +18,7 @@ class Watcher {
     // dep 调用 更新
     update() {
         // 保存当前上下文， 更新的值
-        console.log(this)
+        // console.log(this)
         this.updater.call(this.vm, this.vm[this.key])
     }
 }

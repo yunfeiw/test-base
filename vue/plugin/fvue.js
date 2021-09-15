@@ -44,7 +44,18 @@ function observe(obj) {
     if (typeof obj !== 'object' || obj == null) {
         return
     }
-    new Observer(obj);
+    // 判断是否为数组
+    if (Array.isArray(obj)) {
+        // 修改他的原型
+        obj.__proto__ = arrayPrototype()
+        // 数组内部元素 响应化处理
+        obj.forEach(e => {
+            observe(e)
+        })
+    }else{
+        new Observer(obj);
+    }
+
 }
 /**
  * @description：
@@ -63,7 +74,7 @@ class Observer {
 }
 
 /**
- * @description:数据响应
+ * @description:数据响应 -- 对象
  */
 
 function defineReactive(obj, key, val) {
@@ -78,7 +89,7 @@ function defineReactive(obj, key, val) {
         get() {
             console.log('获取');
             // 依赖收集
-            console.log(Dep.target)
+            // console.log(Dep.target)
             Dep.target && dep.addDep(Dep.target)
 
             return val;
@@ -93,6 +104,25 @@ function defineReactive(obj, key, val) {
             dep.notify()
         }
     })
+}
+/**
+ * @description: 数据响应 -- 数组
+ * 替换数组原型中的方法
+ */
+function arrayPrototype() {
+    // 备份数组方法
+    const originalProto = Array.prototype;
+    const arrayPrototype = Object.create(originalProto);
+    ['push', 'pop', 'shift', 'unshift'].forEach(method => {
+        arrayPrototype[method] = function () {
+            // 1. 原始操作
+            originalProto[method].apply(this, arguments)
+            // 2. 覆盖操作 -- 通知更新
+            console.log('更新数组了',method)
+        }
+    })
+
+    return arrayPrototype
 }
 
 export default Fvue

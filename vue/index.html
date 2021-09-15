@@ -14,7 +14,9 @@
         <div v-text='counter'></div>
         <p v-html='docs'></p>
         <div>test</div>
-        <input type="text">
+        <input type="text" v-model='txt'>
+        <div>输入：{{txt}}</div>
+        <button @click='add'>add</button>
     </div>
     <script type="module">
         import Fvue from './plugin/fvue.js'
@@ -25,12 +27,16 @@
             el: "#app",
             data: {
                 counter: 1,
+                arr:[],
+                txt:"11",
                 docs:'<div style="color:red;">html文本</div>'
-            }
+            },
+            methods: {
+                add(){
+                    this.counter ++;
+                }
+            },
         })
-        setTimeout(()=>{
-            app.counter++
-        },1000)
     </script>
 </body>
 
