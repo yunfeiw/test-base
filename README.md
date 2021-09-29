@@ -1,1 +1,4 @@
-### vue-router 与 vuex
+### 自定义组件
+
+
+依赖插件 async-validator
