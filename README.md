@@ -9,3 +9,5 @@
 - [vue-router](https://github.com/yunfeiw/test-base/tree/vue-router)
 
 - [custom-com](https://github.com/yunfeiw/test-base/tree/custom-com)
+
+- [jest](https://github.com/yunfeiw/test-base/tree/jest)
